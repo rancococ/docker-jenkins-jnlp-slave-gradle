@@ -39,7 +39,7 @@ RUN mkdir /home/${USER}/.gradle && \
     echo '        mavenLocal()' >> /home/${USER}/.gradle/init.gradle && \
     echo '        maven { url 'https://maven.aliyun.com/repository/public/' }' >> /home/${USER}/.gradle/init.gradle && \
     echo '    }' >> /home/${USER}/.gradle/init.gradle && \
-    echo '}' >> /home/${USER}/.gradle/init.gradle && \
+    echo '}' >> /home/${USER}/.gradle/init.gradle
 
 # set volume info
 VOLUME /home/${USER}/.gradle
