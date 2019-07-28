@@ -5,12 +5,15 @@ FROM registry.cn-hangzhou.aliyuncs.com/rancococ/jenkins-jnlp-slave:3.29.3-centos
 MAINTAINER "rancococ" <rancococ@qq.com>
 
 # set arg info
+ARG USER=jenkins
 ARG GRADLE_VERSION=3.5.1
 ARG GRADLE_HOME=/usr/local/gradle
+ARG GRADLE_REPO=/home/${USER}/.gradle/repository
 ARG GRADLE_URL=https://downloads.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
 
 # set environment
 ENV GRADLE_HOME=${GRADLE_HOME}
+ENV GRADLE_USER_HOME=${GRADLE_REPO}
 
 # set current user
 USER root
@@ -25,4 +28,18 @@ RUN curl --create-dirs -fsSLo /tmp/gradle/gradle.zip ${GRADLE_URL} && \
     \rm -rf /tmp/gradle
 
 # set current user
-USER jenkins
+USER ${USER}
+
+# mkdir .gradle and generate init.gradle
+RUN mkdir /home/${USER}/.gradle && \
+    mkdir -p /home/${USER}/.gradle/repository && \
+    touch /home/${USER}/.gradle/init.gradle && \
+    echo 'allprojects {' >> /home/${USER}/.gradle/init.gradle && \
+    echo '    repositories {' >> /home/${USER}/.gradle/init.gradle && \
+    echo '        mavenLocal()' >> /home/${USER}/.gradle/init.gradle && \
+    echo '        maven { url 'https://maven.aliyun.com/repository/public/' }' >> /home/${USER}/.gradle/init.gradle && \
+    echo '    }' >> /home/${USER}/.gradle/init.gradle && \
+    echo '}' >> /home/${USER}/.gradle/init.gradle && \
+
+# set volume info
+VOLUME /home/${USER}/.gradle
